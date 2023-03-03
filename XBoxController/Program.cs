@@ -40,11 +40,34 @@ namespace XBoxController
             {
                 if(XBoxControllerPoller.xBoxControllers.Count > 0)
                 {
-                    XBoxControllerPoller.xBoxControllers[0].Update();
-
-                    if(XBoxControllerPoller.xBoxControllers[0].JustPressedA)
+                    if (XBoxControllerPoller.xBoxControllers[0].Connected)
                     {
-                        Console.WriteLine("You just pressed the A button!");
+                        // Just print anything if a value has changed.
+                        if (XBoxControllerPoller.xBoxControllers[0].Update())
+                        {
+                            if (XBoxControllerPoller.xBoxControllers[0].JustPressedA)
+                            {
+                                Console.WriteLine("You just pressed the A button!");
+                            }
+
+                            if (XBoxControllerPoller.xBoxControllers[0].RightThumb)
+                            {
+                                Console.WriteLine("You just pressed the right thumb button!");
+                            }
+
+                            if (XBoxControllerPoller.xBoxControllers[0].RightTrigger > Gamepad.TriggerThreshold)
+                            {
+                                Console.WriteLine("Touching the right trigger! Value: " + XBoxControllerPoller.xBoxControllers[0].RightTrigger);
+                            }
+                            if (Math.Abs(XBoxControllerPoller.xBoxControllers[0].RightThumbX) > Gamepad.RightThumbDeadZone)
+                            {
+                                Console.WriteLine("Moving along the x-axis! Value: " + XBoxControllerPoller.xBoxControllers[0].RightThumbX);
+                            }
+                            if (Math.Abs(XBoxControllerPoller.xBoxControllers[0].RightThumbY) > Gamepad.RightThumbDeadZone)
+                            {
+                                Console.WriteLine("Moving along the y-axis! Value: " + XBoxControllerPoller.xBoxControllers[0].RightThumbY);
+                            }
+                        }
                     }
                 }
 
@@ -149,6 +172,17 @@ namespace XBoxController
         public bool RightShoulder => (state.Gamepad.Buttons & GamepadButtons.RightShoulder) != GamepadButtons.None;
         public bool LeftThumb => (state.Gamepad.Buttons & GamepadButtons.LeftThumb) != GamepadButtons.None;
         public bool RightThumb => (state.Gamepad.Buttons & GamepadButtons.RightThumb) != GamepadButtons.None;
+
+        // The trigger buttons on top of the controller have a pressed-value between 0 and 255.
+        public byte RightTrigger => state.Gamepad.RightTrigger;
+        public byte LeftTrigger => state.Gamepad.LeftTrigger;
+
+        // Each of the thumbstick axis members is a signed value between -32768 and 32767 describing the position of the thumbstick.
+        // Casting to int to avoid the silly Math.Abs(short.MinValue) crash. (-32768 cannot be abs'ed to 32768 since it is an overflow)
+        public int RightThumbX => state.Gamepad.RightThumbX;
+        public int RightThumbY => state.Gamepad.RightThumbY;
+        public int LeftThumbX => state.Gamepad.LeftThumbX;
+        public int LeftThumbY => state.Gamepad.LeftThumbY;
 
         // These goes true when the previous state was false, but current state is true. NOTE: These are reset to false in every call to Update(), so make sure you check these every loop if you are using them!
         public bool JustPressedA { get; private set; } = false;
