@@ -4,28 +4,6 @@ using Vortice.XInput;
 
 namespace XBoxController
 {
-    // https://github.com/amerkoleci/Vortice.Windows
-    // Källkoden hittar du här: C:\Users\tornseglare\Documents\Vortice.Windows
-    // 
-    // Liten repetition om hur man kopplar till en dll:
-    // private static readonly nint s_xinputLibrary;
-    // private static readonly delegate* unmanaged<int, out State, int> s_XInputGetState;
-    // 
-    // Ladda in xinput dll:
-    // s_xinputLibrary = LoadXInputLibrary(out Version);
-    //   NativeLibrary.TryLoad("xinput1_4.dll", out IntPtr libraryHandle)
-    // 
-    // Sen letar vi upp XInputGetState i xinput dllen:
-    // s_XInputGetState = (delegate* unmanaged<int, out State, int>)GetExport("XInputGetState");
-    //   private static nint GetExport(string name) => NativeLibrary.GetExport(s_xinputLibrary, name);
-    // 
-    //  <-System.Runtime.InteropServices.NativeLibrary är microsofts lilla sköna. 
-    //    Man får en pekare till funktionen XInputGetState i dllen.
-
-    // https://learn.microsoft.com/en-us/windows/win32/xinput/getting-started-with-xinput
-    // <-Han har gjort en riktigt tajjt koppling till detta c++ bibliotek.
-
-
     internal class Program
     {
         static void Main(string[] args)
