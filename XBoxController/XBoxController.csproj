@@ -4,7 +4,33 @@
     <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <PackageId>Tornseglare.$(AssemblyName)</PackageId>
+    <Title>XBox controller, supporting 1 to 4 connected controllers</Title>
+    <Copyright>https://licenses.nuget.org/MIT</Copyright>
+    <PackageProjectUrl>https://github.com/tornseglare/XBoxController</PackageProjectUrl>
+    <Description>XBox controller, supporting 1 to 4 connected controllers.</Description>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <RepositoryUrl>https://github.com/tornseglare/XBoxController</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>xinput;xbox;controller</PackageTags>
+    <Authors>$(AssemblyName)</Authors>
+    <PackageIcon>MadskullCreations.png</PackageIcon>
+    <AssemblyVersion></AssemblyVersion>
+    <FileVersion></FileVersion>
+    <Version>$(VersionPrefix)</Version>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\MadskullCreations.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Include="..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Vortice.XInput" Version="2.4.2" />
