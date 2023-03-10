@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using Vortice.XInput;
 
-namespace XBoxController
+namespace MASK
 {
     public static class XBoxControllerPoller
     {
@@ -10,10 +10,75 @@ namespace XBoxController
         // 
         public static readonly Dictionary<int, XBoxController> xBoxControllers = new();
 
+        static CancellationTokenSource? tokenSource = null;
+
+        /// <summary>
+        /// Starts a task which will poll for new controllers periodically. 
+        /// </summary>
+        public static async void StartPolling()
+        {
+            if(tokenSource == null)
+            {
+                tokenSource = new();
+            }
+
+            CancellationToken ct = tokenSource.Token;
+
+            try
+            {
+                Task theTask = new(() =>
+                {
+                    // This task loops until the ct got a cancellation request.
+                    double lastTime = 0;
+                    Stopwatch stopWatch = new();
+                    stopWatch.Start();
+
+                    while (true)
+                    {
+                        if (ct.IsCancellationRequested)
+                        {
+                            break;
+                        }
+
+                        // Poll for new controllers every two seconds, maybe three. 
+                        if (stopWatch.Elapsed.TotalSeconds - lastTime >= 2)
+                        {
+                            lastTime = stopWatch.Elapsed.TotalSeconds;
+
+                            if (XBoxControllerPoller.IterateControllers())
+                            {
+                                Debug.WriteLine("One or more controllers found and connected!");
+                            }
+                        }
+
+                        Thread.Sleep(0);
+                    }
+                });
+
+                // Start the task, then await it.
+                theTask.Start();
+
+                await theTask;
+            }
+            finally
+            {
+                tokenSource.Dispose();
+                tokenSource = null;
+            }
+        }
+
+        /// <summary>
+        /// Cancels the polling task.
+        /// </summary>
+        public static void StopPolling()
+        {
+            tokenSource?.Cancel();
+        }
+
         /// <summary>
         /// Polls for new controllers. 
         /// Also reconnect disconnected controllers once they return to life.
-        /// For performance reasons, don't call XInputGetState for an 'empty' user slot every frame. We recommend that you space out checks for new controllers every few seconds instead.
+        /// For performance reasons, don't call IterateControllers() every frame. We recommend that you space out checks for new controllers every few seconds instead, or use the StartPolling() to setup a running task.
         /// </summary>
         public static bool IterateControllers()
         {

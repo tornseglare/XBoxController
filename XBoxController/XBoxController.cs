@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using Vortice.XInput;
 
-namespace XBoxController
+namespace MASK
 {
     public class XBoxController
     {

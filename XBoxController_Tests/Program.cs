@@ -1,65 +1,73 @@
 ﻿using System.Diagnostics;
 using Vortice.XInput;
+using MASK;
 
-namespace XBoxController
+namespace SomeNameSpace
 {
     internal class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
-            Console.WriteLine("Hello, World!");
+            Console.WriteLine("Hello, World! Press the controllers Start button to exit app.");
             Console.WriteLine(XInput.Version);
 
-            double lastTime = 0;   
-            Stopwatch stopWatch = new();
-            stopWatch.Start();
-            while (true)
+            XBoxControllerPoller.StartPolling();
+
+            try
             {
-                if(XBoxControllerPoller.xBoxControllers.Count > 0)
+                while (true)
                 {
-                    if (XBoxControllerPoller.xBoxControllers[0].Connected)
+                    if (XBoxControllerPoller.xBoxControllers.Count > 0)
                     {
-                        // Just print anything if a value has changed.
-                        if (XBoxControllerPoller.xBoxControllers[0].Update())
+                        if (XBoxControllerPoller.xBoxControllers[0].Connected)
                         {
-                            if (XBoxControllerPoller.xBoxControllers[0].JustPressedA)
-                            {
-                                Console.WriteLine("You just pressed the A button!");
-                            }
+                            XBoxController controller = XBoxControllerPoller.xBoxControllers[0];
 
-                            if (XBoxControllerPoller.xBoxControllers[0].RightThumb)
+                            // Just print anything if a value has changed.
+                            if (controller.Update())
                             {
-                                Console.WriteLine("You just pressed the right thumb button!");
-                            }
+                                if (controller.JustPressedA)
+                                {
+                                    Console.WriteLine("You just pressed the A button!");
+                                }
 
-                            if (XBoxControllerPoller.xBoxControllers[0].RightTrigger > Gamepad.TriggerThreshold)
-                            {
-                                Console.WriteLine("Touching the right trigger! Value: " + XBoxControllerPoller.xBoxControllers[0].RightTrigger);
-                            }
-                            if (Math.Abs(XBoxControllerPoller.xBoxControllers[0].RightThumbX) > Gamepad.RightThumbDeadZone)
-                            {
-                                Console.WriteLine("Moving along the x-axis! Value: " + XBoxControllerPoller.xBoxControllers[0].RightThumbX);
-                            }
-                            if (Math.Abs(XBoxControllerPoller.xBoxControllers[0].RightThumbY) > Gamepad.RightThumbDeadZone)
-                            {
-                                Console.WriteLine("Moving along the y-axis! Value: " + XBoxControllerPoller.xBoxControllers[0].RightThumbY);
+                                if (controller.RightThumb)
+                                {
+                                    Console.WriteLine("You just pressed the right thumb button!");
+                                }
+
+                                if (controller.RightTrigger > Gamepad.TriggerThreshold)
+                                {
+                                    Console.WriteLine("Touching the right trigger! Value: " + controller.RightTrigger);
+                                }
+                                if (Math.Abs(controller.RightThumbX) > Gamepad.RightThumbDeadZone)
+                                {
+                                    Console.WriteLine("Moving along the x-axis! Value: " + controller.RightThumbX);
+                                }
+                                if (Math.Abs(controller.RightThumbY) > Gamepad.RightThumbDeadZone)
+                                {
+                                    Console.WriteLine("Moving along the y-axis! Value: " + controller.RightThumbY);
+                                }
+
+                                if (controller.Start)
+                                {
+                                    Console.WriteLine("You just pressed start button! Terminating app..");
+
+                                    XBoxControllerPoller.StopPolling();
+                                    break;
+                                }
                             }
                         }
                     }
+
+                    // It's sleeping waaay more than a millisecond here. (According to spec it sleep minimum of 1 milliseconds, but probably/always more than 15)
+                    Thread.Sleep(1);
                 }
-
-                if (stopWatch.Elapsed.TotalSeconds - lastTime >= 2)
-                {
-                    lastTime = stopWatch.Elapsed.TotalSeconds;
-
-                    if(XBoxControllerPoller.IterateControllers())
-                    {
-                        Console.WriteLine("One or more controllers found and connected!");
-                    }
-                }
-
-                // It's sleeping waaay more than a millisecond here. (According to spec it sleep minimum of 1 milliseconds, but probably/always more than 15)
-                Thread.Sleep(1);
+            }
+            finally
+            {
+                // Attempt to bug in and stop the polling task when closing this console app. (Not working though, it seem necessary to setup a message pump and the whole circus, which I wont do for this simple example.)
+                XBoxControllerPoller.StopPolling();
             }
         }
     }
