@@ -20,7 +20,7 @@
     <FileVersion></FileVersion>
     <VersionPrefix>1.0.1</VersionPrefix>
     <Version>$(VersionPrefix)</Version>
-    <PackageReleaseNotes>first release</PackageReleaseNotes>
+    <PackageReleaseNotes>maintenance release</PackageReleaseNotes>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
   </PropertyGroup>
