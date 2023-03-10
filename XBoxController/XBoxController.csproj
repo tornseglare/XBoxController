@@ -6,7 +6,7 @@
     <Nullable>enable</Nullable>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageId>Tornseglare.$(AssemblyName)</PackageId>
-    <Title>XBox controller, supporting 1 to 4 connected controllers</Title>
+    <Title>XBoxController</Title>
     <Copyright>https://licenses.nuget.org/MIT</Copyright>
     <PackageProjectUrl>https://github.com/tornseglare/XBoxController</PackageProjectUrl>
     <Description>XBox controller, supporting 1 to 4 connected controllers.</Description>
@@ -14,11 +14,14 @@
     <RepositoryUrl>https://github.com/tornseglare/XBoxController</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>xinput;xbox;controller</PackageTags>
-    <Authors>$(AssemblyName)</Authors>
+    <Authors>Tornseglare, Jon Lennryd</Authors>
     <PackageIcon>MadskullCreations.png</PackageIcon>
     <AssemblyVersion></AssemblyVersion>
     <FileVersion></FileVersion>
     <Version>$(VersionPrefix)</Version>
+    <PackageReleaseNotes>first release</PackageReleaseNotes>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
   </PropertyGroup>
 
   <ItemGroup>
