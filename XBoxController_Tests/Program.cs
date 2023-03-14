@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using Vortice.XInput;
+﻿using Vortice.XInput;
 using MASK;
 
 namespace SomeNameSpace
@@ -36,10 +35,26 @@ namespace SomeNameSpace
                                     Console.WriteLine("You just pressed the right thumb button!");
                                 }
 
+                                // The right motor is the high-frequency motor, the left motor is the low-frequency motor. 
                                 if (controller.RightTrigger > Gamepad.TriggerThreshold)
                                 {
                                     Console.WriteLine("Touching the right trigger! Value: " + controller.RightTrigger);
+
+                                    if (XInput.SetVibration(controller.UserIndex, 0.0f, controller.RightTrigger / 255.0f) == false)
+                                    {
+                                        Console.WriteLine("Not vibrating!");
+                                    }
                                 }
+                                if (controller.LeftTrigger > Gamepad.TriggerThreshold)
+                                {
+                                    Console.WriteLine("Touching the left trigger! Value: " + controller.LeftTrigger);
+
+                                    if (XInput.SetVibration(0, controller.LeftTrigger / 255.0f, 0.0f) == false)
+                                    {
+                                        Console.WriteLine("Not vibrating!");
+                                    }
+                                }
+
                                 if (Math.Abs(controller.RightThumbX) > Gamepad.RightThumbDeadZone)
                                 {
                                     Console.WriteLine("Moving along the x-axis! Value: " + controller.RightThumbX);

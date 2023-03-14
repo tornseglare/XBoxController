@@ -3,11 +3,16 @@ using Vortice.XInput;
 
 namespace MASK
 {
+    /// <summary>
+    /// Poll for new controllers and reconnecting controllers.
+    /// Use StartPolling() when your app starts and StopPolling() during app shut down.
+    /// </summary>
     public static class XBoxControllerPoller
     {
-        // Keyed on the controls dwUserIndex, decided by windows when the control is connected, cable-wise.
-        // "The number corresponds to the port that the controller is plugged into, and is not modifiable."
-        // 
+        /// <summary>
+        /// Keyed on the controls dwUserIndex, decided by windows when the control is connected, cable-wise.
+        /// "The number corresponds to the port that the controller is plugged into, and is not modifiable."
+        /// </summary>
         public static readonly Dictionary<int, XBoxController> xBoxControllers = new();
 
         static CancellationTokenSource? tokenSource = null;

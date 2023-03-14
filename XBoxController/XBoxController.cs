@@ -3,18 +3,29 @@ using Vortice.XInput;
 
 namespace MASK
 {
-    public class XBoxController
+    /// <summary>
+    /// One xbox controller.
+    /// </summary>
+    public class XBoxController : IController
     {
-        readonly int dwUserIndex;
         State state;
         bool connected = false; // If user disconnect during play this goes false.
         int lastPacketNumber = 0; // To see if anything has changed from previous call to Update(), compare the dwPacketNumber in State.
         Gamepad lastGamepad = new(); // Once anything has changed, lets compare with the last 'frames' state, to detect if any buttons etc. has been pressed, and so on.
 
-        // Always check this before reading any states.
+        /// <summary>
+        /// The id of the controller, a value between 0 and 3.
+        /// </summary>
+        public readonly int UserIndex;
+
+        /// <summary>
+        /// <inheritdoc/>
+        /// </summary>
         public bool Connected => connected;
 
-        // These are immediate states, right-now-states.
+        /// <summary>
+        /// <inheritdoc/>
+        /// </summary>
         public bool A => (state.Gamepad.Buttons & GamepadButtons.A) != GamepadButtons.None;
         public bool B => (state.Gamepad.Buttons & GamepadButtons.B) != GamepadButtons.None;
         public bool X => (state.Gamepad.Buttons & GamepadButtons.X) != GamepadButtons.None;
@@ -31,24 +42,31 @@ namespace MASK
         public bool LeftThumb => (state.Gamepad.Buttons & GamepadButtons.LeftThumb) != GamepadButtons.None;
         public bool RightThumb => (state.Gamepad.Buttons & GamepadButtons.RightThumb) != GamepadButtons.None;
 
-        // The trigger buttons on top of the controller have a pressed-value between 0 and 255.
+        /// <summary>
+        /// <inheritdoc/>
+        /// </summary>
         public byte RightTrigger => state.Gamepad.RightTrigger;
         public byte LeftTrigger => state.Gamepad.LeftTrigger;
 
-        // Each of the thumbstick axis members is a signed value between -32768 and 32767 describing the position of the thumbstick.
-        // Casting to int to avoid the silly Math.Abs(short.MinValue) crash. (-32768 cannot be abs'ed to 32768 since it is an overflow)
+        /// <summary>
+        /// <inheritdoc/>
+        /// </summary>
         public int RightThumbX => state.Gamepad.RightThumbX;
         public int RightThumbY => state.Gamepad.RightThumbY;
         public int LeftThumbX => state.Gamepad.LeftThumbX;
         public int LeftThumbY => state.Gamepad.LeftThumbY;
 
-        // These goes true when the previous state was false, but current state is true. NOTE: These are reset to false in every call to Update(), so make sure you check these every loop if you are using them!
+        /// <summary>
+        /// <inheritdoc/>
+        /// </summary>
         public bool JustPressedA { get; private set; } = false;
         public bool JustPressedB { get; private set; } = false;
         public bool JustPressedX { get; private set; } = false;
         public bool JustPressedY { get; private set; } = false;
 
-        // These goes true when the previous state was true, but current state is false. Same as JustPressed, these are reset in Update().
+        /// <summary>
+        /// <inheritdoc/>
+        /// </summary>
         public bool JustReleasedA { get; private set; } = false;
         public bool JustReleasedB { get; private set; } = false;
         public bool JustReleasedX { get; private set; } = false;
@@ -79,12 +97,11 @@ namespace MASK
 
         private XBoxController(int dwUserIndex)
         {
-            this.dwUserIndex = dwUserIndex;
+            this.UserIndex = dwUserIndex;
         }
 
         /// <summary>
-        /// Call every as often to update the state of the controller.
-        /// If returns true, a change of some kind has happened since last call to Update().
+        /// <inheritdoc/>
         /// </summary>
         public bool Update()
         {
@@ -92,10 +109,10 @@ namespace MASK
 
             ResetJusts();
 
-            if (!XInput.GetState(dwUserIndex, out state))
+            if (!XInput.GetState(UserIndex, out state))
             {
                 // Ouch, controller disconnected!
-                Debug.WriteLine($"Controller {dwUserIndex} disconnected!");
+                Debug.WriteLine($"Controller {UserIndex} disconnected!");
                 connected = false;
                 return true;
             }
@@ -128,7 +145,7 @@ namespace MASK
         public void Reconnected()
         {
             connected = true;
-            Debug.WriteLine($"Controller {dwUserIndex} reconnected!");
+            Debug.WriteLine($"Controller {UserIndex} reconnected!");
         }
 
         private void CompareLastGamepad()
