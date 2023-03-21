@@ -20,7 +20,7 @@
     <FileVersion></FileVersion>
     <VersionPrefix>1.0.3</VersionPrefix>
     <Version>$(VersionPrefix)</Version>
-    <PackageReleaseNotes>docs included. interface IController created. updated README.</PackageReleaseNotes>
+    <PackageReleaseNotes>connect/reconnect event added</PackageReleaseNotes>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
