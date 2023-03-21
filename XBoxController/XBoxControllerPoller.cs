@@ -4,6 +4,29 @@ using Vortice.XInput;
 namespace MASK
 {
     /// <summary>
+    /// When a xbox controller event occurs.
+    /// </summary>
+    public enum XBoxControllerEventState
+    {
+        /// <summary>
+        /// A controller has been connected to the pc.
+        /// </summary>
+        Connected,
+
+        /// <summary>
+        /// The controller has reconnected.
+        /// </summary>
+        Reconnected
+    }
+
+    /// <summary>
+    /// The delegate for the event that a new xbox controller has been connected/reconnected to the pc.
+    /// </summary>
+    /// <param name="xBoxController">The controller's id</param>
+    /// <param name="state">Type of event</param>
+    public delegate void NotifyXBoxControllerStateChanged(XBoxController xBoxController, XBoxControllerEventState state);
+
+    /// <summary>
     /// Poll for new controllers and reconnecting controllers.
     /// Use StartPolling() when your app starts and StopPolling() during app shut down.
     /// </summary>
@@ -15,6 +38,16 @@ namespace MASK
         /// </summary>
         public static readonly Dictionary<int, XBoxController> xBoxControllers = new();
 
+        /// <summary>
+        /// This event fires when a controller has been connected/reconnected to the computer.
+        /// Add your callback function to this event. 
+        /// </summary>
+        /// <example>XBoxControllerPoller.NotifyXBoxControllerStateChanged += YourEventConsumerFunction;</example>
+        public static event NotifyXBoxControllerStateChanged? XBoxControllerEvent;
+
+        /// <summary>
+        /// The communication with the poll-thread happens trough this token.
+        /// </summary>
         static CancellationTokenSource? tokenSource = null;
 
         /// <summary>
@@ -92,26 +125,39 @@ namespace MASK
             // 0 to 3. 
             for (int i = 0; i < 3; i++)
             {
-                bool res = XInput.GetState(i, out State state);
-
-                if (res)
+                if (!xBoxControllers.ContainsKey(i))
                 {
-                    XBoxController xBoxController = XBoxController.CreateController(i);
+                    bool res = XInput.GetState(i, out _);
 
-                    if (!xBoxControllers.ContainsKey(i))
+                    if (res)
                     {
-                        Console.WriteLine("We got contact! " + i);
-                        Console.WriteLine("Hash code: " + state.Gamepad.GetHashCode());
-
-                        xBoxControllers.Add(i, xBoxController);
-                        newControllerConnected = true;
+                        // Add a new, disconnected controller object.
+                        xBoxControllers.Add(i, new XBoxController(i));
                     }
-                    else
+                }
+
+                if (xBoxControllers.ContainsKey(i) && xBoxControllers[i].Connected == false)
+                {
+                    bool everConnected = xBoxControllers[i].EverConnected;
+
+                    // Controller just got added or was added earlier. We must check if it is connected and inform event consumers.
+                    if (xBoxControllers[i].UpdateConnectedState())
                     {
-                        // Already in the list, just set it to connected by calling Update().
-                        if (xBoxControllers[i].Connected == false)
+                        if (everConnected == false)
                         {
-                            xBoxControllers[i].Reconnected();
+                            Debug.WriteLine("We got contact! " + i);
+
+                            newControllerConnected = true;
+
+                            // If we have any event consumers, lets inform them we have a new controller connected.
+                            XBoxControllerEvent?.Invoke(xBoxControllers[i], XBoxControllerEventState.Connected);
+                        }
+                        else
+                        {
+                            Debug.WriteLine("Reconnected! " + i);
+
+                            // If we have any event consumers, lets inform them the controller has reconnected.
+                            XBoxControllerEvent?.Invoke(xBoxControllers[i], XBoxControllerEventState.Reconnected);
                         }
                     }
                 }

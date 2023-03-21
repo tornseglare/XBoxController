@@ -10,6 +10,7 @@ namespace MASK
     {
         State state;
         bool connected = false; // If user disconnect during play this goes false.
+        private bool everConnected = false; // Set to true when the controller goes online for the first time.
         int lastPacketNumber = 0; // To see if anything has changed from previous call to Update(), compare the dwPacketNumber in State.
         Gamepad lastGamepad = new(); // Once anything has changed, lets compare with the last 'frames' state, to detect if any buttons etc. has been pressed, and so on.
 
@@ -17,6 +18,11 @@ namespace MASK
         /// The id of the controller, a value between 0 and 3.
         /// </summary>
         public readonly int UserIndex;
+
+        /// <summary>
+        /// Is set to true when the controller goes online for the first time. 
+        /// </summary>
+        public bool EverConnected => everConnected;
 
         /// <summary>
         /// <inheritdoc/>
@@ -77,27 +83,25 @@ namespace MASK
         /// </summary>
         /// <param name="dwUserIndex">a value between 0 and 3</param>
         /// <returns>a new XBoxController object</returns>
+        /// <remarks>You should use the constructor directly instead.</remarks>
+        [Obsolete("CreateController() is deprecated, please use constructor and UpdateConnectedState() instead.")]
         public static XBoxController CreateController(int dwUserIndex)
         {
             XBoxController controller = new(dwUserIndex);
 
-            // From the docs: Note that the return value of XInputGetState can be used to determine if the controller is connected.
-            if (XInput.GetState(dwUserIndex, out controller.state))
-            {
-                controller.connected = true;
-                controller.lastPacketNumber = controller.state.PacketNumber;
-            }
-            else
-            {
-                controller.connected = false;
-            }
-
+            controller.UpdateConnectedState();
             return controller;
         }
 
-        private XBoxController(int dwUserIndex)
+        /// <summary>
+        /// Create a new XBoxController object. 
+        /// </summary>
+        /// <param name="dwUserIndex">a value between 0 and 3</param>
+        public XBoxController(int dwUserIndex)
         {
             this.UserIndex = dwUserIndex;
+
+            connected = false;
         }
 
         /// <summary>
@@ -142,10 +146,32 @@ namespace MASK
         /// Mark the controller as connected.
         /// Should only be called from XBoxControllerPoller when it detects the controller is once again connected.
         /// </summary>
+        [Obsolete("Reconnected() is deprecated, please use UpdateConnectedState() instead.")]
         public void Reconnected()
         {
             connected = true;
             Debug.WriteLine($"Controller {UserIndex} reconnected!");
+        }
+
+        /// <summary>
+        /// If controller was disconnected but is again connected, this will set the controller to connected.
+        /// </summary>
+        /// <returns>True if connected.</returns>
+        public bool UpdateConnectedState()
+        {
+            // From the docs: Note that the return value of XInputGetState can be used to determine if the controller is connected.
+            if (XInput.GetState(UserIndex, out state))
+            {
+                everConnected = true;
+                connected = true;
+                lastPacketNumber = state.PacketNumber;
+            }
+            else
+            {
+                connected = false;
+            }
+
+            return connected;
         }
 
         private void CompareLastGamepad()

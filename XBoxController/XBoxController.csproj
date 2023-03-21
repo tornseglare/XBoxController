@@ -18,7 +18,7 @@
     <PackageIcon>MadskullCreations.png</PackageIcon>
     <AssemblyVersion></AssemblyVersion>
     <FileVersion></FileVersion>
-    <VersionPrefix>1.0.2</VersionPrefix>
+    <VersionPrefix>1.0.3</VersionPrefix>
     <Version>$(VersionPrefix)</Version>
     <PackageReleaseNotes>docs included. interface IController created. updated README.</PackageReleaseNotes>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
