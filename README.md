@@ -27,12 +27,12 @@ https://github.com/tornseglare/XBoxController/tree/main/XBoxController_Tests
           {
             // A button just got pressed.
           }
-		  
-		  if(controller.JustReleasedA)
-		  {
-		    // A button just got released.
-		  }
-          		  
+          
+          if(controller.JustReleasedA)
+          {
+            // A button just got released.
+          }
+    
           if (controller.RightTrigger > Gamepad.TriggerThreshold)
           {
             // Using the Vortice.XInput functionality here.
@@ -42,13 +42,13 @@ https://github.com/tornseglare/XBoxController/tree/main/XBoxController_Tests
             }
           }
         }
-		
-		// Regardless of if Update() returns true or false you can always check the current state. 
-		// (Not with the JustPressed/ReleasedXYZs though, these changes only when Update() has detected a change and returns true, naturally.)
-		if(controller.A)
-		{
-		  // The A button is pressed.
-		}
+    
+        // Regardless of if Update() returns true or false you can always check the current state. 
+        // (Not with the JustPressed/ReleasedXYZs though, these changes only when Update() has detected a change and returns true, naturally.)
+        if(controller.A)
+        {
+          // The A button is pressed.
+        }
       }
     }
     
@@ -76,9 +76,9 @@ https://github.com/tornseglare/XBoxController/tree/main/XBoxController_Tests
       {
         Console.WriteLine($"Controller {xBoxController.UserIndex} reconnected!");
       }
-	  else if(state == XBoxControllerEventState.Disconnected)
-	  {
-	    // Player/User has disconnected the controller. Urge them to reconnect it.
-	    Console.WriteLine($"Controller {daController!.UserIndex} disconnected!");
-	  }	  
+      else if(state == XBoxControllerEventState.Disconnected)
+      {
+        // Player/User has disconnected the controller. Urge them to reconnect it.
+        Console.WriteLine($"Controller {daController!.UserIndex} disconnected!");
+      }	  
     }
