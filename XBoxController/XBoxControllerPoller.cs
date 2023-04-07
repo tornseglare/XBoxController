@@ -96,8 +96,7 @@ namespace MASK
                     if (!xBoxControllers.ContainsKey(i))
                     {
                         Console.WriteLine("We got contact! " + i);
-                        Console.WriteLine("Hash code: " + state.Gamepad.GetHashCode());
-
+                        Console.WriteLine("Packet number: " + state.PacketNumber);
                         xBoxControllers.Add(i, xBoxController);
                         newControllerConnected = true;
                     }

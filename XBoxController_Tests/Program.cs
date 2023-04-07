@@ -60,6 +60,15 @@ namespace SomeNameSpace
                         }
                     }
 
+                    // Support for many controllers goes here. :) 
+                    foreach(KeyValuePair<int,XBoxController> kvp in XBoxControllerPoller.xBoxControllers)
+                    {
+                        if(kvp.Value.Update())
+                        {
+                            // Things updated. 
+                        }
+                    }
+
                     // It's sleeping waaay more than a millisecond here. (According to spec it sleep minimum of 1 milliseconds, but probably/always more than 15)
                     Thread.Sleep(1);
                 }
