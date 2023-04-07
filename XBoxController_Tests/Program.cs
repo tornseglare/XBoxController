@@ -18,7 +18,6 @@ namespace SomeNameSpace
 
             XBoxControllerPoller.XBoxControllerEvent += XBoxControllerPoller_XBoxControllerEvent;
             XBoxControllerPoller.StartPolling();
-            bool connected = false;
 
             try
             {
@@ -26,21 +25,22 @@ namespace SomeNameSpace
                 {
                     if (daController != null)
                     {
-                        // Just print something if a value has changed.
                         if (daController.Update())
                         {
+                            // JustPressedA and the other JustPresseds must be checked when Update() returns true.
                             if (daController.JustPressedA)
                             {
                                 Console.WriteLine("You just pressed the A button!");
                             }
 
-                            if (daController.RightThumb)
+                            if(daController.JustReleasedA)
                             {
-                                Console.WriteLine("You just pressed the right thumb button!");
+                                Console.WriteLine("And now you released the A button!");
                             }
 
                             // The right motor is the high-frequency motor, the left motor is the low-frequency motor. 
-                            if (daController.RightTrigger > Gamepad.TriggerThreshold)
+                            // (Not using the TriggerThreshold just because I want to feel/hear the lowest motor frequencies.)
+                            if (daController.RightTrigger > 0)//Gamepad.TriggerThreshold)
                             {
                                 Console.WriteLine("Touching the right trigger! Value: " + daController.RightTrigger);
 
@@ -49,7 +49,7 @@ namespace SomeNameSpace
                                     Console.WriteLine("Not vibrating!");
                                 }
                             }
-                            if (daController.LeftTrigger > Gamepad.TriggerThreshold)
+                            if (daController.LeftTrigger > 0)//Gamepad.TriggerThreshold)
                             {
                                 Console.WriteLine("Touching the left trigger! Value: " + daController.LeftTrigger);
 
@@ -70,21 +70,18 @@ namespace SomeNameSpace
 
                             if (daController.Start)
                             {
-                                Console.WriteLine("You just pressed start button! Terminating app..");
+                                Console.WriteLine("You pressed the start button! Terminating app..");
 
                                 XBoxControllerPoller.StopPolling();
                                 break;
                             }
                         }
-                        else if(daController.Connected)
+
+                        // All states except JustPressedXYZs can be checked even when Update() returns false, it only means the 
+                        // state has not changed since last time.
+                        if (daController.RightThumb)
                         {
-                            connected = true;
-                        }
-                        else if(connected)
-                        {
-                            // Somewhat complicated way to detect it was connected last time we checked, but are not anymore.
-                            connected = false;
-                            Console.WriteLine($"Controller {daController.UserIndex} disconnected!");
+                            Console.WriteLine("You are pressing the right thumb button!");
                         }
                     }
 
@@ -98,11 +95,15 @@ namespace SomeNameSpace
                     }*/
 
                     // Support for many controllers goes here. :) 
-                    foreach(KeyValuePair<int,XBoxController> kvp in XBoxControllerPoller.xBoxControllers)
+                    foreach (KeyValuePair<int,XBoxController> kvp in XBoxControllerPoller.xBoxControllers)
                     {
-                        if(kvp.Value.Update())
+                        XBoxController controller = kvp.Value;
+
+                        // Skip controller 0 since that is daController and we don't want to call Update without acting on the return value.
+                        // (It would mess up the JustPressedXYZs.)
+                        if (kvp.Key != 0 && controller.Update())
                         {
-                            // Things updated. 
+                            // Things updated, handle changes. 
                         }
                     }
 
@@ -118,7 +119,7 @@ namespace SomeNameSpace
         }
 
         /// <summary>
-        /// Gets called when a controller is connected or reconnected.
+        /// Gets called when a controller is connected, disconnected or reconnected.
         /// </summary>
         private static void XBoxControllerPoller_XBoxControllerEvent(XBoxController xBoxController, XBoxControllerEventState state)
         {
@@ -133,6 +134,10 @@ namespace SomeNameSpace
                 else if(state == XBoxControllerEventState.Reconnected)
                 {
                     Console.WriteLine($"Controller {daController!.UserIndex} reconnected!");
+                }
+                else if(state == XBoxControllerEventState.Disconnected)
+                {
+                    Console.WriteLine($"Controller {daController!.UserIndex} disconnected!");
                 }
             }
         }

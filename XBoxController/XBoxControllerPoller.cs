@@ -16,7 +16,12 @@ namespace MASK
         /// <summary>
         /// The controller has reconnected.
         /// </summary>
-        Reconnected
+        Reconnected,
+
+        /// <summary>
+        /// The controller has been disconnected.
+        /// </summary>
+        Disconnected
     }
 
     /// <summary>
@@ -164,6 +169,17 @@ namespace MASK
             }
 
             return newControllerConnected;
+        }
+
+        /// <summary>
+        /// On XBoxController.Update() it detected the controller has been disconnected and so call this to invoke any listeners.
+        /// </summary>
+        internal static void ControllerDisconnected(int userIndex)
+        {
+            if (xBoxControllers.ContainsKey(userIndex))
+            {
+                XBoxControllerEvent?.Invoke(xBoxControllers[userIndex], XBoxControllerEventState.Disconnected);
+            }
         }
     }
 }

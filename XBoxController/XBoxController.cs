@@ -109,7 +109,7 @@ namespace MASK
         /// </summary>
         public bool Update()
         {
-            if (!connected) return false; // Call Reconnected() once it is reconnected.
+            if (!connected) return false; // Call UpdateConnectedState() once it is reconnected.
 
             ResetJusts();
 
@@ -118,6 +118,9 @@ namespace MASK
                 // Ouch, controller disconnected!
                 Debug.WriteLine($"Controller {UserIndex} disconnected!");
                 connected = false;
+
+                XBoxControllerPoller.ControllerDisconnected(UserIndex);
+
                 return true;
             }
             else
