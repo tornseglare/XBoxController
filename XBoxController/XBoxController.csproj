@@ -18,11 +18,12 @@
     <PackageIcon>MadskullCreations.png</PackageIcon>
     <AssemblyVersion></AssemblyVersion>
     <FileVersion></FileVersion>
-    <VersionPrefix>1.0.1</VersionPrefix>
+    <VersionPrefix>1.0.3</VersionPrefix>
     <Version>$(VersionPrefix)</Version>
-    <PackageReleaseNotes>maintenance release</PackageReleaseNotes>
+    <PackageReleaseNotes>connect/reconnect event added</PackageReleaseNotes>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>

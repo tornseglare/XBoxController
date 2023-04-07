@@ -3,18 +3,35 @@ using Vortice.XInput;
 
 namespace MASK
 {
-    public class XBoxController
+    /// <summary>
+    /// One xbox controller.
+    /// </summary>
+    public class XBoxController : IController
     {
-        readonly int dwUserIndex;
         State state;
         bool connected = false; // If user disconnect during play this goes false.
+        private bool everConnected = false; // Set to true when the controller goes online for the first time.
         int lastPacketNumber = 0; // To see if anything has changed from previous call to Update(), compare the dwPacketNumber in State.
         Gamepad lastGamepad = new(); // Once anything has changed, lets compare with the last 'frames' state, to detect if any buttons etc. has been pressed, and so on.
 
-        // Always check this before reading any states.
+        /// <summary>
+        /// The id of the controller, a value between 0 and 3.
+        /// </summary>
+        public readonly int UserIndex;
+
+        /// <summary>
+        /// Is set to true when the controller goes online for the first time. 
+        /// </summary>
+        public bool EverConnected => everConnected;
+
+        /// <summary>
+        /// <inheritdoc/>
+        /// </summary>
         public bool Connected => connected;
 
-        // These are immediate states, right-now-states.
+        /// <summary>
+        /// <inheritdoc/>
+        /// </summary>
         public bool A => (state.Gamepad.Buttons & GamepadButtons.A) != GamepadButtons.None;
         public bool B => (state.Gamepad.Buttons & GamepadButtons.B) != GamepadButtons.None;
         public bool X => (state.Gamepad.Buttons & GamepadButtons.X) != GamepadButtons.None;
@@ -31,24 +48,31 @@ namespace MASK
         public bool LeftThumb => (state.Gamepad.Buttons & GamepadButtons.LeftThumb) != GamepadButtons.None;
         public bool RightThumb => (state.Gamepad.Buttons & GamepadButtons.RightThumb) != GamepadButtons.None;
 
-        // The trigger buttons on top of the controller have a pressed-value between 0 and 255.
+        /// <summary>
+        /// <inheritdoc/>
+        /// </summary>
         public byte RightTrigger => state.Gamepad.RightTrigger;
         public byte LeftTrigger => state.Gamepad.LeftTrigger;
 
-        // Each of the thumbstick axis members is a signed value between -32768 and 32767 describing the position of the thumbstick.
-        // Casting to int to avoid the silly Math.Abs(short.MinValue) crash. (-32768 cannot be abs'ed to 32768 since it is an overflow)
+        /// <summary>
+        /// <inheritdoc/>
+        /// </summary>
         public int RightThumbX => state.Gamepad.RightThumbX;
         public int RightThumbY => state.Gamepad.RightThumbY;
         public int LeftThumbX => state.Gamepad.LeftThumbX;
         public int LeftThumbY => state.Gamepad.LeftThumbY;
 
-        // These goes true when the previous state was false, but current state is true. NOTE: These are reset to false in every call to Update(), so make sure you check these every loop if you are using them!
+        /// <summary>
+        /// <inheritdoc/>
+        /// </summary>
         public bool JustPressedA { get; private set; } = false;
         public bool JustPressedB { get; private set; } = false;
         public bool JustPressedX { get; private set; } = false;
         public bool JustPressedY { get; private set; } = false;
 
-        // These goes true when the previous state was true, but current state is false. Same as JustPressed, these are reset in Update().
+        /// <summary>
+        /// <inheritdoc/>
+        /// </summary>
         public bool JustReleasedA { get; private set; } = false;
         public bool JustReleasedB { get; private set; } = false;
         public bool JustReleasedX { get; private set; } = false;
@@ -59,32 +83,29 @@ namespace MASK
         /// </summary>
         /// <param name="dwUserIndex">a value between 0 and 3</param>
         /// <returns>a new XBoxController object</returns>
+        /// <remarks>You should use the constructor directly instead.</remarks>
+        [Obsolete("CreateController() is deprecated, please use constructor and UpdateConnectedState() instead.")]
         public static XBoxController CreateController(int dwUserIndex)
         {
             XBoxController controller = new(dwUserIndex);
 
-            // From the docs: Note that the return value of XInputGetState can be used to determine if the controller is connected.
-            if (XInput.GetState(dwUserIndex, out controller.state))
-            {
-                controller.connected = true;
-                controller.lastPacketNumber = controller.state.PacketNumber;
-            }
-            else
-            {
-                controller.connected = false;
-            }
-
+            controller.UpdateConnectedState();
             return controller;
         }
 
-        private XBoxController(int dwUserIndex)
+        /// <summary>
+        /// Create a new XBoxController object. 
+        /// </summary>
+        /// <param name="dwUserIndex">a value between 0 and 3</param>
+        public XBoxController(int dwUserIndex)
         {
-            this.dwUserIndex = dwUserIndex;
+            this.UserIndex = dwUserIndex;
+
+            connected = false;
         }
 
         /// <summary>
-        /// Call every as often to update the state of the controller.
-        /// If returns true, a change of some kind has happened since last call to Update().
+        /// <inheritdoc/>
         /// </summary>
         public bool Update()
         {
@@ -92,10 +113,10 @@ namespace MASK
 
             ResetJusts();
 
-            if (!XInput.GetState(dwUserIndex, out state))
+            if (!XInput.GetState(UserIndex, out state))
             {
                 // Ouch, controller disconnected!
-                Debug.WriteLine($"Controller {dwUserIndex} disconnected!");
+                Debug.WriteLine($"Controller {UserIndex} disconnected!");
                 connected = false;
                 return true;
             }
@@ -125,10 +146,32 @@ namespace MASK
         /// Mark the controller as connected.
         /// Should only be called from XBoxControllerPoller when it detects the controller is once again connected.
         /// </summary>
+        [Obsolete("Reconnected() is deprecated, please use UpdateConnectedState() instead.")]
         public void Reconnected()
         {
             connected = true;
-            Debug.WriteLine($"Controller {dwUserIndex} reconnected!");
+            Debug.WriteLine($"Controller {UserIndex} reconnected!");
+        }
+
+        /// <summary>
+        /// If controller was disconnected but is again connected, this will set the controller to connected.
+        /// </summary>
+        /// <returns>True if connected.</returns>
+        public bool UpdateConnectedState()
+        {
+            // From the docs: Note that the return value of XInputGetState can be used to determine if the controller is connected.
+            if (XInput.GetState(UserIndex, out state))
+            {
+                everConnected = true;
+                connected = true;
+                lastPacketNumber = state.PacketNumber;
+            }
+            else
+            {
+                connected = false;
+            }
+
+            return connected;
         }
 
         private void CompareLastGamepad()
