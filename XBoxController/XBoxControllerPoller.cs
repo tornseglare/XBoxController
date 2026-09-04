@@ -1,5 +1,5 @@
 ﻿using System.Diagnostics;
-using Vortice.XInput;
+using MASK.XInput;
 
 namespace MASK
 {
@@ -132,7 +132,7 @@ namespace MASK
             {
                 if (!xBoxControllers.ContainsKey(i))
                 {
-                    bool res = XInput.GetState(i, out _);
+                    bool res = xInput.GetState(i, out _);
 
                     if (res)
                     {

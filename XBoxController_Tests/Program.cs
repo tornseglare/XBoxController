@@ -1,4 +1,4 @@
-﻿using Vortice.XInput;
+﻿using MASK.XInput;
 using MASK;
 using XBoxController_Tests;
 
@@ -11,7 +11,7 @@ namespace SomeNameSpace
         static void Main()
         {
             Console.WriteLine("Hello, World! Press the controllers Start button to exit app.");
-            Console.WriteLine(XInput.Version);
+            Console.WriteLine(xInput.Version);
 
             // This line would allow us to add a derived class object. It must be done before calling StartPolling() or IterateControllers() to ensure the list xBoxControllers are empty.
             //XBoxControllerPoller.xBoxControllers.Add(0, new FancierXBoxController(0));
@@ -38,13 +38,19 @@ namespace SomeNameSpace
                                 Console.WriteLine("And now you released the A button!");
                             }
 
+                            // Code behind this is not recommended since it relies on an unofficial API, but its fun to test. :)
+                            if(daController.Guide)
+                            {
+                                Console.WriteLine("Pressing the Guide button!");
+                            }
+
                             // The right motor is the high-frequency motor, the left motor is the low-frequency motor. 
                             // (Not using the TriggerThreshold just because I want to feel/hear the lowest motor frequencies.)
                             if (daController.RightTrigger > 0)//Gamepad.TriggerThreshold)
                             {
                                 Console.WriteLine("Touching the right trigger! Value: " + daController.RightTrigger);
 
-                                if (XInput.SetVibration(daController.UserIndex, 0.0f, daController.RightTrigger / 255.0f) == false)
+                                if (xInput.SetVibration(daController.UserIndex, 0.0f, daController.RightTrigger / 255.0f) == false)
                                 {
                                     Console.WriteLine("Not vibrating!");
                                 }
@@ -53,7 +59,7 @@ namespace SomeNameSpace
                             {
                                 Console.WriteLine("Touching the left trigger! Value: " + daController.LeftTrigger);
 
-                                if (XInput.SetVibration(0, daController.LeftTrigger / 255.0f, 0.0f) == false)
+                                if (xInput.SetVibration(0, daController.LeftTrigger / 255.0f, 0.0f) == false)
                                 {
                                     Console.WriteLine("Not vibrating!");
                                 }

@@ -1,5 +1,5 @@
 ﻿using System.Diagnostics;
-using Vortice.XInput;
+using MASK.XInput;
 
 namespace MASK
 {
@@ -42,7 +42,12 @@ namespace MASK
         public bool DPadRight => (state.Gamepad.Buttons & GamepadButtons.DPadRight) != GamepadButtons.None;
         public bool Start => (state.Gamepad.Buttons & GamepadButtons.Start) != GamepadButtons.None;
         public bool Back => (state.Gamepad.Buttons & GamepadButtons.Back) != GamepadButtons.None;
-        public bool Guide => (state.Gamepad.Buttons & GamepadButtons.Guide) != GamepadButtons.None;
+        public bool Guide { 
+            get{
+                xInput.GuideButton(UserIndex, ref state);
+                return (state.Gamepad.Buttons & GamepadButtons.Guide) != GamepadButtons.None;
+            } 
+        }
         public bool LeftShoulder => (state.Gamepad.Buttons & GamepadButtons.LeftShoulder) != GamepadButtons.None;
         public bool RightShoulder => (state.Gamepad.Buttons & GamepadButtons.RightShoulder) != GamepadButtons.None;
         public bool LeftThumb => (state.Gamepad.Buttons & GamepadButtons.LeftThumb) != GamepadButtons.None;
@@ -113,7 +118,7 @@ namespace MASK
 
             ResetJusts();
 
-            if (!XInput.GetState(UserIndex, out state))
+            if (!xInput.GetState(UserIndex, out state))
             {
                 // Ouch, controller disconnected!
                 Debug.WriteLine($"Controller {UserIndex} disconnected!");
@@ -163,7 +168,7 @@ namespace MASK
         public bool UpdateConnectedState()
         {
             // From the docs: Note that the return value of XInputGetState can be used to determine if the controller is connected.
-            if (XInput.GetState(UserIndex, out state))
+            if (xInput.GetState(UserIndex, out state))
             {
                 everConnected = true;
                 connected = true;
