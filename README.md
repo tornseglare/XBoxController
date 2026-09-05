@@ -1,13 +1,15 @@
 # XBoxController
 
-Using the Vortice.Windows nuget, see https://github.com/amerkoleci/Vortice.Windows for more examples.
+Use the xbox controller with ease through this simple library.
 
-For a working and more up-to-date demo, please see the XBoxController_Tests project here:
+For a working demo, please see the XBoxController_Tests project here:
 https://github.com/tornseglare/XBoxController/tree/main/XBoxController_Tests
+
+This library previously had a dependency to the Vortice.Windows nuget. This dependency are now gone, but their nuget is still great: https://github.com/amerkoleci/Vortice.Windows 
 
 # How to use
 
-    using Vortice.XInput;
+    using MASK.XInput;
     using MASK;
     
     // Starts a task which periodically look for newly connected controllers.
@@ -58,7 +60,7 @@ https://github.com/tornseglare/XBoxController/tree/main/XBoxController_Tests
 
 # Use the connected/reconnected event
 
-    using Vortice.XInput;
+    using MASK.XInput;
     using MASK;
 
     // Somewhere in your setup.

@@ -18,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\StandAloneTest\MASK.XInput.csproj" />
+    <ProjectReference Include="..\MASK.XInput\MASK.XInput.csproj" />
   </ItemGroup>
 
   <ItemGroup>
