@@ -168,7 +168,7 @@ namespace MASK.XInput
         /// Good to use if the app gets minimized for example. 
         /// </summary>
         /// <remarks>Deprecated in Windows 10 or later</remarks>
-        /// <see cref="https://learn.microsoft.com/en-us/windows/win32/api/xinput/nf-xinput-xinputenable"/>
+        /// <see>https://learn.microsoft.com/en-us/windows/win32/api/xinput/nf-xinput-xinputenable</see> 
         public static void SetReporting(bool enableReporting)
         {
             if (Version == XInputVersion.Version910)
