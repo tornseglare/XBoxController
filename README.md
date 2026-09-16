@@ -5,7 +5,7 @@ Use the xbox controller with ease through this simple library.
 For a working demo, please see the XBoxController_Tests project here:
 https://github.com/tornseglare/XBoxController/tree/main/XBoxController_Tests
 
-This library previously had a dependency to the Vortice.Windows nuget. This dependency are now gone, but their nuget is still great: https://github.com/amerkoleci/Vortice.Windows 
+This library previously had a dependency to the Vortice.Windows nuget. This dependency is now gone, but their nuget is still great: https://github.com/amerkoleci/Vortice.Windows 
 
 # How to use
 

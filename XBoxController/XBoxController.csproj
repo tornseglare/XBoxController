@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFrameworks>net8.0</TargetFrameworks>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
@@ -18,9 +18,9 @@
     <PackageIcon>MadskullCreations.png</PackageIcon>
     <AssemblyVersion></AssemblyVersion>
     <FileVersion></FileVersion>
-    <VersionPrefix>1.0.4</VersionPrefix>
+    <VersionPrefix>1.0.5</VersionPrefix>
     <Version>$(VersionPrefix)</Version>
-    <PackageReleaseNotes>disconnected event added</PackageReleaseNotes>
+    <PackageReleaseNotes>removed dependency to Vortice.Windows nuget</PackageReleaseNotes>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
